@@ -1,24 +1,24 @@
 const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
 const db = require("./config/db");
-
 const UserRouter = require("./routes/UserRouter");
+
+app.use(cors());
 app.use(express.json());
+
 app.use(UserRouter);
-const dns = require('dns');
 
-dns.setServers(['8.8.8.8', '1.1.1.1']);
+const dns = require("dns");
 
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
-// connect db
 db();
 
+const PORT = process.env.PORT || 3000;
 
-// server
-app.listen(3000,()=>{
-
-    console.log("server started")
-
-})
+app.listen(PORT, () => {
+  console.log("server started");
+});

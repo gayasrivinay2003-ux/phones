@@ -4,27 +4,40 @@ const UserSchema = new mongoose.Schema({
 
     name: {
         type: String,
-        required: true
+        //required: true
     },
 
     email: {
         type: String,
-        required: true,
+       // required: true,
         unique: true
     },
 
     password: {
         type: String,
-        required: true
+       // required: true
+    },
+    phone_name: {
+        type: String
     },
 
     brand: {
         type: String
     },
 
-    phone: {
+    price: {
+        type: Number,
+    },
+    ram: {
+        type: String,
+    },
+    storage: {
+        type: String
+    },
+    image: {
         type: String
     }
+    
 
 });
 
