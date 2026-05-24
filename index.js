@@ -8,8 +8,10 @@ const UserRouter = require("./routes/UserRouter");
 
 app.use(
   cors({
-    origin:
+    origin: [
+      "http://localhost:5173",
       "https://gayasrivinay2003-ux-phonesfrontend.vercel.app",
+    ],
   })
 );
 
