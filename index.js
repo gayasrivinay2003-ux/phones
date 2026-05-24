@@ -6,7 +6,13 @@ const app = express();
 const db = require("./config/db");
 const UserRouter = require("./routes/UserRouter");
 
-app.use(cors());
+app.use(
+  cors({
+    origin:
+      "https://gayasrivinay2003-ux-phonesfrontend.vercel.app",
+  })
+);
+
 app.use(express.json());
 
 app.use(UserRouter);
