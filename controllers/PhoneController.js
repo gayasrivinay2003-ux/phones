@@ -1,183 +1,283 @@
 const User = require('../model/User');
+
 const bcrypt = require('bcryptjs');
+
 const jwt = require('jsonwebtoken');
 
 
+// ================= REGISTER =================
 
 const registerUser = async (req, res) => {
 
     try {
 
-        const { name, email, password, brand, phone } = req.body;
+        const {
+            name,
+            email,
+            password,
+            brand,
+            phone
+        } = req.body;
 
-        
-        const existingUser = await User.findOne({ email });
+        // Check Existing User
+        const existingUser =
+            await User.findOne({ email });
 
         if (existingUser) {
 
-            return res.send("User already exists");
+            return res.json({
+                message: "User already exists"
+            });
 
         }
 
-        
-        const hashedPassword = await bcrypt.hash(password, 10);
+        // Hash Password
+        const hashedPassword =
+            await bcrypt.hash(password, 10);
+
+        // Create User
         const user = new User({
+
             name,
             email,
             password: hashedPassword,
             brand,
             phone
+
         });
 
         await user.save();
 
-        res.send("User registered successfully");
+        res.json({
+            message:
+                "User registered successfully"
+        });
 
     } catch (err) {
 
         console.log(err);
 
+        res.json({
+            message: "Server Error"
+        });
+
     }
 };
+
+
+// ================= LOGIN =================
 
 const loginUser = async (req, res) => {
 
     try {
 
-        const { email, password } = req.body;
-        const user = await User.findOne({ email });
+        const {
+            email,
+            password
+        } = req.body;
+
+        // Find User
+        const user =
+            await User.findOne({ email });
 
         if (!user) {
 
-            return res.send("User not found");
+            return res.json({
+                message: "User not found"
+            });
 
         }
-        const isMatch = await bcrypt.compare(password, user.password);
+
+        // Compare Password
+        const isMatch =
+            await bcrypt.compare(
+                password,
+                user.password
+            );
 
         if (!isMatch) {
 
-            return res.send("Invalid password");
+            return res.json({
+                message: "Invalid password"
+            });
 
         }
+
+        // Create Token
         const token = jwt.sign(
+
             { id: user._id },
+
             "secretkey",
+
             { expiresIn: "1d" }
+
         );
 
-        res.send({
+        res.json({
+
             message: "Login successful",
+
             token
+
         });
 
     } catch (err) {
 
         console.log(err);
 
+        res.json({
+            message: "Server Error"
+        });
+
     }
 };
 
 
-// CREATE
-const AddPhone = async(req,res)=>{
+// ================= CREATE PHONE =================
 
-    try{
+const AddPhone = async (req, res) => {
 
-        const user = new User(req.body);
+    try {
+
+        const user =
+            new User(req.body);
 
         await user.save();
 
-        res.send(user);
+        res.json(user);
 
-    }catch(err){
+    } catch (err) {
 
-        res.send(err)
+        console.log(err);
 
-    }
-}
-
-
-// READ ALL
-const getPhones = async(req,res)=>{
-
-    try{
-
-        const user = await User.find();
-
-        res.send(user)
-
-    }catch(err){
-
-        console.log(err)
+        res.json({
+            message: "Error adding phone"
+        });
 
     }
-
-}
-
-
-// READ ONE
-const getPhonesById = async(req,res)=>{
-
-    try{
-
-        const user = await User.findById(req.params.id);
-
-        res.send(user);
-
-    }catch(err){
-
-        console.log(err)
-
-    }
-
-}
+};
 
 
-// UPDATE
-const updatePhones = async(req,res)=>{
+// ================= READ ALL =================
 
-    try{
+const getPhones = async (req, res) => {
 
-        const user = await User.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {new:true}
-        )
+    try {
 
-        res.send(user);
+        const user =
+            await User.find();
 
-    }catch(err){
+        res.json(user);
 
-        console.log(err)
+    } catch (err) {
+
+        console.log(err);
+
+        res.json({
+            message: "Error fetching phones"
+        });
 
     }
+};
 
-}
 
+// ================= READ ONE =================
 
-// DELETE
-const deletePhone = async(req,res)=>{
+const getPhonesById = async (req, res) => {
 
-    try{
+    try {
 
-        await User.findByIdAndDelete(req.params.id);
+        const user =
+            await User.findById(
+                req.params.id
+            );
 
-        res.send("User deleted");
+        res.json(user);
 
-    }catch(err){
+    } catch (err) {
 
-        console.log(err)
+        console.log(err);
+
+        res.json({
+            message: "Error fetching phone"
+        });
 
     }
-}
+};
+
+
+// ================= UPDATE =================
+
+const updatePhones = async (req, res) => {
+
+    try {
+
+        const user =
+            await User.findByIdAndUpdate(
+
+                req.params.id,
+
+                req.body,
+
+                { new: true }
+
+            );
+
+        res.json(user);
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.json({
+            message: "Error updating phone"
+        });
+
+    }
+};
+
+
+// ================= DELETE =================
+
+const deletePhone = async (req, res) => {
+
+    try {
+
+        await User.findByIdAndDelete(
+            req.params.id
+        );
+
+        res.json({
+            message: "User deleted"
+        });
+
+    } catch (err) {
+
+        console.log(err);
+
+        res.json({
+            message: "Error deleting phone"
+        });
+
+    }
+};
 
 
 module.exports = {
+
     registerUser,
+
     loginUser,
+
     AddPhone,
+
     getPhones,
+
     getPhonesById,
+
     updatePhones,
+
     deletePhone
-}
+
+};
