@@ -4,25 +4,64 @@ const router = express.Router();
 
 const auth = require('../middleware/auth');
 
+const upload =
+require('../middleware/upload');
+
 const {
+
     registerUser,
+
     loginUser,
+
     AddPhone,
+
     getPhones,
+
     updatePhones,
+
     deletePhone,
+
     getPhonesById
+
 } = require('../controllers/PhoneController');
 
-router.post('/register', registerUser);
+
+// REGISTER WITH MULTER
+router.post(
+
+    '/register',
+
+    upload.single("profile"),
+
+    registerUser
+
+);
+
 router.post('/login', loginUser);
-router.post('/phone/add', auth, AddPhone);
+
+router.post(
+    '/phone/add',
+    auth,
+    AddPhone
+);
+
 router.get('/', getPhones);
-router.get('/phone/:id', getPhonesById);
 
-router.put('/phone/update/:id', auth, updatePhones);
+router.get(
+    '/phone/:id',
+    getPhonesById
+);
 
-router.delete('/phone/:id', auth, deletePhone);
+router.put(
+    '/phone/update/:id',
+    auth,
+    updatePhones
+);
 
+router.delete(
+    '/phone/:id',
+    auth,
+    deletePhone
+);
 
 module.exports = router;

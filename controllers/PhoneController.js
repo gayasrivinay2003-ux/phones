@@ -19,6 +19,12 @@ const registerUser = async (req, res) => {
             phone
         } = req.body;
 
+        // Uploaded image filename
+        const profile =
+            req.file
+            ? req.file.filename
+            : "";
+
         // Check Existing User
         const existingUser =
             await User.findOne({ email });
@@ -42,15 +48,20 @@ const registerUser = async (req, res) => {
             email,
             password: hashedPassword,
             brand,
-            phone
+            phone,
+            profile
 
         });
 
         await user.save();
 
         res.json({
+
             message:
-                "User registered successfully"
+                "User registered successfully",
+
+            user
+
         });
 
     } catch (err) {
@@ -118,7 +129,9 @@ const loginUser = async (req, res) => {
 
             message: "Login successful",
 
-            token
+            token,
+
+            user
 
         });
 
